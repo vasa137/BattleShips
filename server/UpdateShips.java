@@ -58,6 +58,8 @@ public class UpdateShips extends GameState {
 				}
 			}
 		
+		update.append("]");
+		
 		battleOverseer.myGame.sendMessageToAllPlayers(update.toString()); // send update to all clients
 		
 		ArrayList<Player> activePlayers = Round.getInstance().activePlayers; // get active players from previous round
