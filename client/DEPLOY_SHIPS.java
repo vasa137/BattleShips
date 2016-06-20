@@ -6,7 +6,7 @@ public class DEPLOY_SHIPS extends Command {
 	
 	@Override
 	public void executeMessage(BattleshipsPlayer player, String message) {
-			System.out.println("SHIP DEPLOY STATE STARTED");
+			System.out.println("SHIP DEPLOY STATE STARTED!\n");
 	     	// at the beggining confirm deploy 
 			player.send(CommunicationCommands.CONFIRM_DEPLOY + " " + player.getID()+ " " + message);
 			// and send state reques to update left time

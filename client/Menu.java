@@ -33,7 +33,7 @@ public class Menu {
 		stateMap=new HashMap<Integer,HashMap<String,Command>>();
 		stateMap.put(OBSERVE_STATE,observeState);
 		stateMap.put(DEPLOY_SHIPS_STATE,deployState);
-		stateMap.put(FIRE_STATE,observeState);
+		stateMap.put(FIRE_STATE,fireState);
 	
 	}
 	
@@ -48,18 +48,9 @@ public class Menu {
 				}
 		}
 		else oldstate = state;
-		/*
-		synchronized(this){
-			System.out.print(state+'>');
-			System.out.println();
-		}
-		*/
 		try {
 			if(System.in.available() > 0) return Citaj.Line();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (IOException e) {}
 		return null;
     }
 	

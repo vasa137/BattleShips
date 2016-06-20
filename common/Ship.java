@@ -27,7 +27,6 @@ public class Ship {
 	public Coordinate coordinateOfSegment(int index) throws Bad_Coordinate{
 		//first index is 0
 		// get one of segments depends of index value
-		System.out.println("index : " + index +  " segmentStatus.length = " + segmentStatus.length);
 		
 		if (index<0 || index >= segmentStatus.length) throw new Bad_Coordinate();
 		
@@ -55,13 +54,20 @@ public class Ship {
 	}
 	
 	public static Ship makeShip(String shipText){
-		String delims = "[,]=()";
+		System.out.println( "ship Text " + shipText);
+		String delims = "S[,]=()";
 		String[] tokens = StringSpliter.delimStr(shipText, delims);
 		// make ship depends on text of format: "S(segmentNumber)=[Coordinate1,Coordinate2 ... ]"
-		int orientation=Integer.parseInt(tokens[3],10)-Integer.parseInt(tokens[2],10);
+        int orientation=1;
+		if (tokens.length>=3){
+		   orientation=Integer.parseInt(tokens[2],10)-Integer.parseInt(tokens[1],10);
+		}
 		if (orientation==1) orientation=HORIZONTAL;
 		else orientation=VERTICAL;
-		return new Ship(Integer.parseInt(tokens[1]),orientation);
+		System.out.println( "ship is  " + tokens[1] + "or < " +orientation);
+		Ship s=new Ship(Integer.parseInt(tokens[0]),orientation);
+		s.firstCoordinate=Coordinate.makeCoordinate(tokens[1]);
+		return s;
 	}
 	
 	
@@ -86,6 +92,7 @@ public class Ship {
 				index=hitCoordinate.getColumn()-firstCoordinate.getColumn();
 		else if(orientation==VERTICAL && hitCoordinate.getColumn() == firstCoordinate.getColumn())
 			index=hitCoordinate.getRow()-firstCoordinate.getRow();
+		
 		//then return segment status(HIT OR OPERATIVE)
 		if (index<0 || index>=segmentStatus.length) throw new Bad_Coordinate();
 	     return segmentStatus[index];
@@ -99,33 +106,55 @@ public class Ship {
 	
 	public boolean spaceAvailable(Table table) {
 		// forward table, and tries to put that ship on table
+		
+		if (firstCoordinate==null) {
+			System.out.println("First coordinate is not set");
+			return false;
+		}
+		
+		for (int i=0;i<segmentStatus.length;i++){
+			try {
+				Coordinate coord=coordinateOfSegment(i);
+				Ship s=table.getShip(coord);
+				if (s!=null){
+					System.out.println("1.Mesto je zauzeto " +coord );
+					return false;
+				}
+				}
+			 catch (Bad_Coordinate e) {
+				System.out.println("Ne staje na tablu ");
+	            return false;
+			}
+		}
+		
 		Coordinate lastCoordinate=null;
+		
 		//get last coordinate of ship
 		try {
 			lastCoordinate=coordinateOfSegment(segmentStatus.length-1);
 		} catch (Bad_Coordinate e) {
 			System.out.println("Space Available: Bad Coordinate");
 		}
-		try {
-			Ship ship=table.getShip(lastCoordinate); 
-		} catch (Bad_Coordinate e1) {
-			return false;
-		}
+	
 		// check all coordinates, all coordinates of ship and coordinates around that ship
 		int xbegin=firstCoordinate.getColumn()-1;
 		int xend=lastCoordinate.getColumn()+1;
 		
 		int ybegin=firstCoordinate.getRow()-1;
 		int yend=lastCoordinate.getRow()+1;
-	
+
 		for(int i=xbegin;i<=xend;i++){
 			for(int j=ybegin;j<=yend;j++){
-				Ship s;
 				try {
-					s = table.getShip(new Coordinate(i,j));
+					Ship s = table.getShip(new Coordinate(i,j));
 					// get ship on set coordinate, if that place is unavailable , than we can return false
-					if(s!=null) return false;
-				} catch (Bad_Coordinate e) {}
+					if(s!=null) {
+						System.out.println("2.Mesto je zauzeto " + i + j );
+						return false;
+					}
+				} catch (Bad_Coordinate e) {
+					System.out.println("Kad oivicim nece");
+				}
 			}
 		}
 		return true;

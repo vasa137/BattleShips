@@ -63,22 +63,8 @@ public class BattleshipsPlayer
         clientName = name;
         client.send(CommunicationCommands.JOIN_MESSAGE + " " + name);
         Menu menu = new Menu();
-        while(!inGame && accessFlag){
-				try {
-					// while not enter the game sleep 
-					Thread.sleep(8000);
-				} 
-				catch (InterruptedException e) {}
-					if (!inGame) {
-						// if it doesn't success from some reason , he wil ask to try again 
-						System.out.println("Do you want to try again?");
-						String choice=Citaj.String();
-						if (choice.equals("yes"))  client.send(CommunicationCommands.JOIN_MESSAGE + " " + name);
-						else accessFlag=false;
-					}
-				
-		}
-        
+        System.out.println("Waiting for server response! \n");
+        while(!inGame && accessFlag);
         while(accessFlag){
 			// after entering the game, the user will be able to see menu in different states
              String message = menu.print(this,state);
@@ -198,17 +184,16 @@ public class BattleshipsPlayer
 		opponentTables = new HashMap<String,Table>();
 		for(int i=3;i<tokens.length;i++){
 			try {
-				opponentTables.put(tokens[i],new Table(myTable.numRow(),myTable.numCol(),Table.PUBLIC));
+				if (!tokens[i].equals(clientName)) opponentTables.put(tokens[i],new Table(myTable.numRow(),myTable.numCol(),Table.PUBLIC));
 			} catch (NegativDimension e) {}
 		}
 	}
 
     public void removeOpponentfromTable(String tokens[]) {
-		
 		// if some of players aren't in update list , server will use this command to delete this pklayer from list
        HashMap<String,Table> opponentT=new HashMap<String,Table>();
 		for(int i=3;i<tokens.length;i++){
-			opponentT.put(tokens[i],opponentTables.get(tokens[i]));
+			if (!tokens[i].equals(clientName)) opponentT.put(tokens[i],opponentTables.get(tokens[i]));
 		}
 		opponentTables=opponentT;
 	}
@@ -219,16 +204,17 @@ public class BattleshipsPlayer
 		Set<String> keys = opponentTables.keySet();
 		int counter=1;
         for(String key: keys){
-		string.append(counter++ + ")" + key);
+		string.append(counter++ + ")" + key + "\n");
         }
-        System.out.println("Opponent \n" + string.toString() );
+        System.out.println("Opponents: \n " + string.toString() );
 	}
 
 	public synchronized void printOpponentTables() {
 		Set<String> keys = opponentTables.keySet();
         for(String key: keys){
-        	System.out.println("Opponent "+ key+":" );
+        	System.out.println("Opponent "+ key+":\n" );
             System.out.println(opponentTables.get(key));
+            System.out.println("\n" );
         }
 	}
 

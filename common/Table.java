@@ -4,21 +4,18 @@
  * and open the template in the editor.
  */
 package battleships.common;
-
 /**
  *
  * @author POOP
  */
 public class Table
 {
-	
 	public static final int COVERED=0;
 	public static final int WATER=1;
 	public static final int HIT_SHIP=2;
 	
 	//matrix ship is use only for PRIVATE mode, that is a mode that are used for user table, all fields are undecovred
     private Ship matrixShip[][];
-	
 	//matrix ship is use only for PUBLIC mode, that is a mode that are used for opponent table, all fields are covered on the beginning and will be undecovered in game 
     private int matrixStatus[][];
 	
@@ -29,21 +26,12 @@ public class Table
     
     public Table(int rowNumber, int columnNumber, int status) throws NegativDimension{
     	visible=status;
-    	if (status==PRIVATE){
-			// if mode is private make only matrixShip
-	    	if (rowNumber<0 || columnNumber<0) throw new NegativDimension();
-	    	matrixShip=new Ship[rowNumber][];
-	    	for(int i=0;i<rowNumber;i++){
-	    		matrixShip[i]=new Ship[columnNumber];
-	    	}
-    	}
-    	else{
-			// if mode is public make only markerStatus
-    		 matrixStatus=new int[rowNumber][];
-    		   	for(int i=0;i<rowNumber;i++){
-    		   		matrixStatus[i]=new int[columnNumber];
-    	    }
-    }
+    	if (rowNumber<=0 || columnNumber<=0) throw new NegativDimension();
+		// if mode is private make only matrixShip
+    	if (status==PRIVATE) matrixShip=new Ship[rowNumber][columnNumber];
+    	// if mode is public make only markerStatus
+    	else matrixStatus=new int[rowNumber][columnNumber];
+    
     }
     
    public Table(int rowNumber, int columnNumber) throws NegativDimension{
@@ -51,30 +39,15 @@ public class Table
     }
    
     public void deleteTable(){
-    	if (visible==PRIVATE){
-			// put all fields on null
-    	for(int i=0;i<matrixShip.length;i++){
-    		for(int j=0;j<matrixShip[0].length;j++){
-    		matrixShip[i][j]=null;
-    		}
-    	}
-    	}
-    	else{
-    		for(int i=0;i<matrixStatus.length;i++){
-        		for(int j=0;j<matrixStatus[0].length;j++){
-        		matrixStatus[i][j]=0;
-        		}
-    	  }
-    	}
+    	if (visible==PRIVATE) matrixShip=new Ship[matrixShip.length][matrixShip[0].length];
+    	else matrixStatus=new int[matrixStatus.length][matrixStatus[0].length];
     }
     	
     
     public Ship getShip(Coordinate shipCoordinate) throws Bad_Coordinate{
     	if (visible==PRIVATE){
 			// only private option, because in public mode we don't know value of covered field
-	        if(shipCoordinate.getRow()<0 || shipCoordinate.getRow()>=matrixShip.length || shipCoordinate.getColumn()<0 || shipCoordinate.getColumn()>=matrixShip.length){
-	        	throw new Bad_Coordinate();
-	        }
+	        if(!shipCoordinate.inRange(matrixShip.length)) throw new Bad_Coordinate();
 	    	return matrixShip[shipCoordinate.getRow()][shipCoordinate.getColumn()];
     	}
     	return null;
@@ -83,12 +56,16 @@ public class Table
     
     public boolean putShip(Ship ship, Coordinate shipCoordinate) throws Bad_Coordinate{
     	if (visible==PRIVATE){
-    	
+    		
 		if (shipCoordinate==null) return false;
 		// first check coordinates range
-        if(shipCoordinate.getRow()<0 || shipCoordinate.getRow()>=matrixShip.length || shipCoordinate.getColumn()<0 || shipCoordinate.getColumn()>=matrixShip.length)
-   	     throw new Bad_Coordinate();
+        if (!shipCoordinate.inRange(matrixShip.length)) {
+        	System.out.println("Nije u opsegu");
+        	throw new Bad_Coordinate();
+        }
+        }
          ship.setFirstCoordinate(shipCoordinate);
+         
 		 // if we can put ship on this table, function spaceAvailable return true
          if (ship.spaceAvailable(this)){
         	 for(int i=0;i<ship.segmentNumber();i++){
@@ -97,8 +74,10 @@ public class Table
         	 }
         	 return true;
           }
-    	}
-    	 return false;
+         else{
+        	 System.out.println("Nije space available");
+         }
+      return false;
    }
   
     public boolean putShip(Ship ship) throws Bad_Coordinate {
@@ -109,13 +88,13 @@ public class Table
 		// count number of operative segments, this function will be used in server for check nuber of shoots that player can make
     	int counter=0;
     	if (visible==PRIVATE){
-    	for(int i=0;i<matrixShip.length;i++){
-    		for(int j=0;j<matrixShip[0].length;j++){
-    		try {
-				if (matrixShip[i][j].getStatus(new Coordinate(i,j))==Ship.OPERATIV) counter++;
-			} catch (Bad_Coordinate e) {}
-    		}
-    	}
+	    	for(int i=0;i<matrixShip.length;i++){
+	    		for(int j=0;j<matrixShip[0].length;j++){
+		    		try {
+						if (matrixShip[i][j]!=null && matrixShip[i][j].getStatus(new Coordinate(i,j))==Ship.OPERATIV) counter++;
+					} catch (Bad_Coordinate e) {}
+	    		}
+	    	}
     	}
     	return counter;
     }
@@ -131,7 +110,7 @@ public class Table
    
    public String toString(){
 	   // make string of table
-	   StringBuilder stringTable=new  StringBuilder("");
+	  StringBuilder stringTable=new  StringBuilder("");
 	  for(int i=0;i<numRow();i++){
 		  for(int j=0;j<numCol();j++){
 			  // add chars depends on mode 
@@ -202,13 +181,14 @@ public class Table
 				else ship=new Ship(numberOfSegment,Ship.HORIZONTAL);
 				int row=(int)(Math.random()*sizeTable);
 				int col=(int)(Math.random()*sizeTable);
-				System.out.println("Row : " + row + "Col : " + col);
+				System.out.println("Row : " + row + " Col : " + col);
 				// set first coordinate, using random coordinates
 				ship.setFirstCoordinate(new Coordinate(row,col));
 				try {
 					// try to put this on table , if this failed , ignore this ship 
 					if(putShip(ship)){
-						newMessage.append(ship.toString() + ";");
+					System.out.println("Uspeo da stavi ");
+					newMessage.append(ship.toString() + ";");
 					}
 				} catch (Bad_Coordinate e) {}
 			}

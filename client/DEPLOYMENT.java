@@ -17,10 +17,8 @@ public class DEPLOYMENT extends Command {
 		String[] tokens = StringSpliter.delimStr(player.getDeployContent(),delims);
 		// split message with delimiters
 		int sizeTable=Integer.parseInt(tokens[0]);
-		
 		// make string
 		StringBuilder newMessage=new StringBuilder("SHIP_LAYOUT "+ player.getID() + " ");
-		
 		player.makeTable(sizeTable);
 		
 		synchronized(player){
@@ -28,9 +26,8 @@ public class DEPLOYMENT extends Command {
 			// printing all options for ship appearance
 			int numberOfSegment=Integer.parseInt(tokens[2*i+1]);
 			int numberOfShips=Integer.parseInt(tokens[2*i+2]);
-			System.out.println("NUMBER OF SHIPS:" +numberOfShips + ", NUMBER OF SEGMENTS:" + numberOfSegment);
+			System.out.println("NUMBER OF SHIPS:" +numberOfShips + ", NUMBER OF SEGMENTS:" + numberOfSegment +"\n");
 			}
-		
 		
 		System.out.println("Enter first coordinate(Row, Column), segment number and orientation: H(HORIZONTAL) or V(VERTICAL)");
 		System.out.println("Commands: put and finish");
@@ -40,13 +37,12 @@ public class DEPLOYMENT extends Command {
 		 int column=0;
 		 int segmentNum=0;
 	     char o=' ';
-		while(player.getState()==Menu.DEPLOY_SHIPS_STATE&&player.getTimeLeft()<0){
+		 while(player.getState()==Menu.DEPLOY_SHIPS_STATE&&player.getTimeLeft()<0){
 			// sending message to get periodical message from server 
 			player.send(CommunicationCommands.STATE_REQUEST);
 			   try {
 				     synchronized(player){
-						 // printing left time
-				        System.out.print("TIME LEFT: " + player.getTimeLeft() + " deploy>");
+				        System.out.print("deploy>");
 				    }
 				    
 				   if (System.in.available()>0) {
@@ -54,12 +50,9 @@ public class DEPLOYMENT extends Command {
 			        }
 				   else continue;
 			   }
-			   catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			   catch (IOException e) {}
 				//enter command "put " "to add segment 
-			    if (commandName=="put"){
+			    if (commandName.equals("put")){
 			    synchronized(player){
 					    try {
 							// synonym for KB hit (Keyboard Hit)
@@ -70,20 +63,18 @@ public class DEPLOYMENT extends Command {
 								o=Citaj.Char();
 							}
 							else continue;
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						} catch (IOException e) {}
 			    }
 				int orientation=Ship.VERTICAL;
 				if(o=='H') orientation=Ship.HORIZONTAL;
 				// making coordinate
 				Ship newShip=new Ship(segmentNum,orientation);
 				newShip.setFirstCoordinate(new Coordinate(row,column));
-				newMessage.append(newShip);
+				newMessage.append(newShip.toString());
 				newMessage.append(";");
 			    }
 				// enter command "finish " "to send ship layout
-			    else if(commandName=="finish"){
+			    else if(commandName.equals("finish")){
 			    player.send(newMessage.toString());
 		   }
 			

@@ -15,5 +15,6 @@ public class RANDOM_LAYOUT extends Command {
 		String layoutMessage = player.getTable().randomLayout(player.getDeployContent());
 		newMessage.append(layoutMessage);
 		player.send(newMessage.toString());
+		System.out.println(newMessage);
 	}
 }
