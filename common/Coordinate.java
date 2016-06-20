@@ -30,9 +30,12 @@ public class Coordinate
 		return column;
 	}
 
+	public int getRow() {	
+		return row;
+	}
 	
 	public boolean inRange(int size){
-		if (row<0 || column<0 || row>size || column>size) return false;
+		if (row<0 || column<0 || row>=size || column>=size) return false;
 		else return true;
 	}
 	
@@ -44,9 +47,7 @@ public class Coordinate
     	return s+column;
     }
 
-	public int getRow() {	
-		return row;
-	}
+	
 	
 	
 }

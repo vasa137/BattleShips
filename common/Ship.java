@@ -11,6 +11,7 @@ public class Ship {
 	private int orientation;
 	private Coordinate firstCoordinate;
 
+	
 	public Ship(int segmentNumber,int orient){
 		segmentStatus = new int[segmentNumber];
 		orientation=orient;
@@ -24,23 +25,28 @@ public class Ship {
 	}
 	
 	public Coordinate coordinateOfSegment(int index) throws Bad_Coordinate{
+		//first index is 0
 		// get one of segments depends of index value
 		System.out.println("index : " + index +  " segmentStatus.length = " + segmentStatus.length);
+		
 		if (index<0 || index >= segmentStatus.length) throw new Bad_Coordinate();
 		
-		//if orientation is HORIZONTAL/VERTICAL just incrise column/row value
+		//if orientation is HORIZONTAL/VERTICAL just increase column/row value
+		
 		if (orientation==HORIZONTAL) return new Coordinate(firstCoordinate.getRow(),firstCoordinate.getColumn()+index);
     	else return new Coordinate(firstCoordinate.getRow()+index,firstCoordinate.getColumn());
 	}
 	
+	
 	public String toString(){
-	// make string of format : "S(segmentNumber)=[Coordinate1;Coordinate2 ... ]"
+	// make string of format : "S(segmentNumber)=[Coordinate1,Coordinate2, ... ]"
 		StringBuilder s=new StringBuilder("S("+segmentStatus.length +")=[");
 		if (firstCoordinate!=null){
-			s.append(firstCoordinate);
-	      for(int i=1;i<segmentStatus.length;i++){
+			
+	      for(int i=0;i<segmentStatus.length;i++){
 	        	try {
-					s.append("," + coordinateOfSegment(i));
+	        		if(i!=0) s.append(",");
+					s.append(coordinateOfSegment(i));
 				} catch (Bad_Coordinate e) {}
 	      }
 	          s.append("]");
@@ -51,11 +57,10 @@ public class Ship {
 	public static Ship makeShip(String shipText){
 		String delims = "[,]=()";
 		String[] tokens = StringSpliter.delimStr(shipText, delims);
-		// make ship depends on text of format: "S(segmentNumber)=[Coordinate1;Coordinate2 ... ]"
-		int orientation=Integer.parseInt(tokens[2])-Integer.parseInt(tokens[3]);
+		// make ship depends on text of format: "S(segmentNumber)=[Coordinate1,Coordinate2 ... ]"
+		int orientation=Integer.parseInt(tokens[3],10)-Integer.parseInt(tokens[2],10);
 		if (orientation==1) orientation=HORIZONTAL;
 		else orientation=VERTICAL;
-		
 		return new Ship(Integer.parseInt(tokens[1]),orientation);
 	}
 	
@@ -66,21 +71,21 @@ public class Ship {
 		
 		if(orientation==HORIZONTAL && hitCoordinate.getRow() == firstCoordinate.getRow())
 				index=hitCoordinate.getColumn()-firstCoordinate.getColumn();
-		if(orientation==VERTICAL && hitCoordinate.getColumn() == firstCoordinate.getColumn())
+		else if(orientation==VERTICAL && hitCoordinate.getColumn() == firstCoordinate.getColumn())
 			index=hitCoordinate.getRow()-firstCoordinate.getRow();
 		// then mark that field like hit
 		if (index<0 || index>=segmentStatus.length) throw new Bad_Coordinate();
 	     segmentStatus[index]=HIT;
 	}
 	
+	
 	public int getStatus(Coordinate hitCoordinate) throws Bad_Coordinate{
 		int index=-1;
 		// first find index in array 
 		if(orientation==HORIZONTAL && hitCoordinate.getRow() == firstCoordinate.getRow())
 				index=hitCoordinate.getColumn()-firstCoordinate.getColumn();
-		if(orientation==VERTICAL && hitCoordinate.getColumn() == firstCoordinate.getColumn())
+		else if(orientation==VERTICAL && hitCoordinate.getColumn() == firstCoordinate.getColumn())
 			index=hitCoordinate.getRow()-firstCoordinate.getRow();
-		
 		//then return segment status(HIT OR OPERATIVE)
 		if (index<0 || index>=segmentStatus.length) throw new Bad_Coordinate();
 	     return segmentStatus[index];
