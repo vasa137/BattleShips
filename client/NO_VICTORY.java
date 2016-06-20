@@ -8,7 +8,8 @@ public class NO_VICTORY extends Command {
 		synchronized(player){
 		 System.out.println("NO_VICTORY ");
 		}
-        player.setAccessFlag(false);
+      
+        player.setState(Menu.START_STATE);
 	}
 
 

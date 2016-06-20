@@ -10,7 +10,7 @@ public class VICTORY extends Command {
 		System.out.println("VICTORY !");
 		}
 		// set Access flag to exit game
-		player.setAccessFlag(false);
+		player.setState(Menu.START_STATE);
 	}
 
 	

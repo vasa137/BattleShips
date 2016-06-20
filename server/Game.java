@@ -33,8 +33,8 @@ public class Game {
     private static Game instance;
     private GameState gamestate = WFP.getInstance();
     private String password = "j";
-    private int tableSize = 4, numberOfShips = 3,  maxPlayers = 2;
-    private long timeForDeploy = 5000, roundTime = 15000; 
+    private int tableSize = 5, numberOfShips = 3,  maxPlayers = 2;
+    private long timeForDeploy = 60000, roundTime = 60000; 
     int [] shipCount; // index = number of segments, value = number of ships with index segments
     
     ArrayList<Player> players = new ArrayList<>(), activePlayers;
@@ -116,9 +116,7 @@ public class Game {
         if(players.size() < maxPlayers) {
         	Player p = new Player(pp, name, id);
         	players.add(p);
-             synchronized(gamestate){
-        		if(players.size() == maxPlayers) startGame();
-        	}
+        	if(players.size() == maxPlayers) startGame();
         	return p; // returns added player
         }
         return null;       

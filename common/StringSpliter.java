@@ -15,6 +15,12 @@ public class StringSpliter {
 			}
 			else s.append(str.charAt(i));
 		}
+		
+		if(!(s.toString().equals("") )){
+			result.add(s.toString());
+		}
+		
+		
 		String [] res = new String[result.size()];
 		result.toArray(res);
 		return res;

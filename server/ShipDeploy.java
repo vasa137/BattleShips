@@ -59,12 +59,12 @@ public class ShipDeploy extends GameState {
 			potentialNumberOfPlayers = players.size();
 		
 			confirmedPlayers = new boolean[potentialNumberOfPlayers];
-		
+			commandMap.put(CommunicationCommands.CONFIRM_DEPLOY, new CONFIRM_DEPLOY());
 			battleOverseer.myGame.sendMessageToAllPlayers(messageForAllPlayers);
 		
 		}
 		
-		commandMap.put(CommunicationCommands.CONFIRM_DEPLOY, new CONFIRM_DEPLOY());
+		
 		
 		String messageForNotConfirmed = messageForAllPlayers;
 		int counter = 0;
@@ -125,18 +125,21 @@ public class ShipDeploy extends GameState {
 			wait(); 
 		}
 		
-		commandMap.remove(CommunicationCommands.SHIP_LAYOUT);
+
 		
 		synchronized(this){
 			for(int i = 0; i < activePlayers.size(); i++){
 				if(!(activePlayers.get(i).layoutAcc())){
 					activePlayers.get(i).reportMessage(CommunicationCommands.RANDOM_LAYOUT);
-					Thread.sleep(timeForRandomLayout);
 					//players.get(i).getTable().randomLayout(shipLayout);
 				}
 			}
 		}
 		
+		Thread.sleep(timeForRandomLayout);
+		
+		commandMap.remove(CommunicationCommands.SHIP_LAYOUT);
+			
 		counter = 0;
 		
 		synchronized(this){
@@ -155,6 +158,7 @@ public class ShipDeploy extends GameState {
 
 	@Override
 	public synchronized GameState setNextState() {
+		timer = null;
 		if(activePlayers.size() < 2){
 			try {
 				Game.instance().stopGame();

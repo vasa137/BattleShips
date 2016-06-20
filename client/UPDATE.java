@@ -13,8 +13,7 @@ public class UPDATE extends Command {
 		System.out.println(message);
 		}
 		// after update exceeds in observe state
-		player.setState(Menu.OBSERVE_STATE);
-		for(int i=1; i <tokens.length;i++){
+		for(int i=1; i <tokens.length;i=i+2){
 			Coordinate coord= Coordinate.makeCoordinate(tokens[i+1].substring(0,4));
 			player.update(tokens[i],coord,tokens[i+1].substring(4,5));
 		}

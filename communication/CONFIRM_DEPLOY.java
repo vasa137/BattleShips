@@ -19,7 +19,7 @@ public class CONFIRM_DEPLOY extends ClientCommand {
 	public void executeServerToPlayerMessage(Server server, Player player, String message) throws IOException {
 		int id = player.getID();
 		int index = Game.instance().getPlayers().indexOf(player); // doradi, vraca -1
-		System.out.println("index: " + index + " id : " + id);
+		System.out.println("index: " + index + " id : " + id + " Confirmed");
 		
 		if(index != -1 ){
 			ShipDeploy.getInstance().getConfirmedPlayers()[index] = true; 

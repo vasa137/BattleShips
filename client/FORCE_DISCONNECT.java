@@ -7,6 +7,6 @@ public class FORCE_DISCONNECT extends Command {
 		synchronized(player){
 		System.out.println("FORCE DISCONNECT!");
 		}
-		player.setAccessFlag(false);
+		player.setState(Menu.START_STATE);
 	}
 }

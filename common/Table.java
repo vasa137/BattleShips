@@ -144,7 +144,7 @@ public class Table
    
    public boolean hitTable(Coordinate coord) throws Bad_Coordinate{
 	   // 
-	    if(visible==PUBLIC){
+	    if(visible==PRIVATE){
 			// hit table is used only in private mode, this use server in fire mode
 		Ship ship=getShip(coord);
 		if(ship==null) return false;

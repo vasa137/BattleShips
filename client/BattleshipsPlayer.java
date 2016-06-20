@@ -23,20 +23,22 @@ import battleships.communication.CommunicationCommands;
 
 public class BattleshipsPlayer 
 {
-    private Client client;
+    
     static private HashMap<String,Command> commandMap;
-    private  Receiver clientReciever;
+    Receiver clientReciever;
+    Client client;
     private String clientName;
     private int clientID;
     private boolean accessFlag =true;
-    private int state = Menu.OBSERVE_STATE;
+    private int state = Menu.START_STATE;
     private long endTime;
     private volatile boolean inGame = false;
     private Table myTable = null;
     private HashMap<String,Table> opponentTables;
 	private String deployContent;
 	
-    private class Receiver extends Thread{
+	
+    class Receiver extends Thread{
     	
     	public void run(){
 			// thread that recieve messages, we use this to don't allow thread to block
@@ -53,8 +55,8 @@ public class BattleshipsPlayer
     	}
     }
     
-    public BattleshipsPlayer(InetAddress address) throws SocketException, IOException{
-    	System.out.print("Enter your name: ");
+    public BattleshipsPlayer(){
+    	/*System.out.print("Enter your name: ");
     	String name=Citaj.String();
         client = new Client(address,name);
         clientReciever = new Receiver();
@@ -62,9 +64,9 @@ public class BattleshipsPlayer
         clientReciever.start();
         clientName = name;
         client.send(CommunicationCommands.JOIN_MESSAGE + " " + name);
+        */
+    	
         Menu menu = new Menu();
-        System.out.println("Waiting for server response! \n");
-        while(!inGame && accessFlag);
         while(accessFlag){
 			// after entering the game, the user will be able to see menu in different states
              String message = menu.print(this,state);
@@ -72,29 +74,13 @@ public class BattleshipsPlayer
              Command playerCommand=menu.getCommand(message.split(" ")[0]);
              if (playerCommand!=null) playerCommand.executeMessage(this,message); 
         }
-        clientReciever.interrupt();
+        if (clientReciever!=null) clientReciever.interrupt();
     }
     
     
     public static void main(String [] args)
     {
-        try 
-        {
-			//System.out.println("Enter server IP address: ");
-            BattleshipsPlayer newPlayer = new BattleshipsPlayer(InetAddress.getByName("localhost"));
-        }
-        catch (SocketException ex) 
-        {
-            Logger.getLogger(BattleshipsPlayer.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        catch (UnknownHostException ex) 
-        {
-            Logger.getLogger(BattleshipsPlayer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex) 
-        {
-            Logger.getLogger(BattleshipsPlayer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       new BattleshipsPlayer();
     }
 
     static{
@@ -224,19 +210,19 @@ public class BattleshipsPlayer
 	}
 
 	public synchronized void update(String name, Coordinate coord, String substring) {
-		if (name==clientName) {
-			if (substring=="H")
+		if (name.equals(clientName)) {
+			if (substring.equals("H")){
 				try {
 					// this method we use in PRIVATE mode
 					myTable.hitTable(coord);
 				} catch (Bad_Coordinate e) {}
-			return;
+			}
 		}
 		else{
 			Table table=opponentTables.get(name);
 			if(table!=null){
 				// this method we use in PUBLIC mode
-			if (substring=="H") table.publicSetState(coord,Table.HIT_SHIP);
+			if (substring.equals("H")) table.publicSetState(coord,Table.HIT_SHIP);
 			else table.publicSetState(coord,Table.WATER);
 		   }
 		}

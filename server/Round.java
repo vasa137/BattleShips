@@ -77,7 +77,7 @@ public class Round extends GameState {
 			wait();
 		}
 		
-		commandMap.remove(CommunicationCommands.FIRE, new FIRE());
+		commandMap.remove(CommunicationCommands.FIRE);
 	
 	}
 

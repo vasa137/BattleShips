@@ -9,16 +9,21 @@ public class Menu {
 	private HashMap<Integer, HashMap<String,Command>> stateMap=null;
 	
 	private int oldstate=-1;
+	
 	public static final int OBSERVE_STATE=0;
 	public static final int DEPLOY_SHIPS_STATE=1;
 	public static final int FIRE_STATE=2;
-
+	public static final int START_STATE=3;
 	public Menu(){
 	
+		HashMap<String,Command> startState = new HashMap<String, Command>();
 		HashMap<String,Command> observeState = new HashMap<String, Command>();
 		HashMap<String,Command> deployState= new HashMap<String, Command>();
 		HashMap<String,Command> fireState= new HashMap<String, Command>();
 	
+		startState.put("join",new JOIN());
+		startState.put("exit",new EXIT());
+		
 		observeState.put("state",new STATE());
 		observeState.put("quit", new QUIT());
 		
@@ -31,6 +36,7 @@ public class Menu {
 		fireState.put("fire", new FIRE());
 		
 		stateMap=new HashMap<Integer,HashMap<String,Command>>();
+		stateMap.put(START_STATE,startState);
 		stateMap.put(OBSERVE_STATE,observeState);
 		stateMap.put(DEPLOY_SHIPS_STATE,deployState);
 		stateMap.put(FIRE_STATE,fireState);

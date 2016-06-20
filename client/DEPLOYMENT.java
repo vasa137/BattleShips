@@ -3,6 +3,7 @@ package battleships.client;
 
 import java.io.IOException;
 
+import battleships.common.Bad_Coordinate;
 import battleships.common.Coordinate;
 import battleships.common.Ship;
 import battleships.common.StringSpliter;
@@ -37,18 +38,20 @@ public class DEPLOYMENT extends Command {
 		 int column=0;
 		 int segmentNum=0;
 	     char o=' ';
-		 while(player.getState()==Menu.DEPLOY_SHIPS_STATE&&player.getTimeLeft()<0){
-			// sending message to get periodical message from server 
-			player.send(CommunicationCommands.STATE_REQUEST);
+		 while(player.getState()==Menu.DEPLOY_SHIPS_STATE && player.getTimeLeft()>0){
+			 System.out.println(newMessage.toString());
+			 //sending message to get periodical message from server 
 			   try {
 				     synchronized(player){
 				        System.out.print("deploy>");
 				    }
-				    
+				   while(player.getTimeLeft()>0){
 				   if (System.in.available()>0) {
 				      commandName=Citaj.String();
+				      break;
 			        }
 				   else continue;
+				   }
 			   }
 			   catch (IOException e) {}
 				//enter command "put " "to add segment 
@@ -56,13 +59,16 @@ public class DEPLOYMENT extends Command {
 			    synchronized(player){
 					    try {
 							// synonym for KB hit (Keyboard Hit)
+					    	 while(player.getTimeLeft()>0){
 							if (System.in.available()>0) {
 								row=Citaj.Int();
 								column=Citaj.Int();
 								segmentNum=Citaj.Int();
 								o=Citaj.Char();
+								break;
 							}
 							else continue;
+					    	 }
 						} catch (IOException e) {}
 			    }
 				int orientation=Ship.VERTICAL;
@@ -70,12 +76,19 @@ public class DEPLOYMENT extends Command {
 				// making coordinate
 				Ship newShip=new Ship(segmentNum,orientation);
 				newShip.setFirstCoordinate(new Coordinate(row,column));
+				try {
+					player.getTable().putShip(newShip);
+				} catch (Bad_Coordinate e) {}
+				
 				newMessage.append(newShip.toString());
 				newMessage.append(";");
 			    }
 				// enter command "finish " "to send ship layout
 			    else if(commandName.equals("finish")){
+			    
 			    player.send(newMessage.toString());
+			    System.out.println("poslata poruka " + newMessage.toString());
+			    break;
 		   }
 			
 	  }

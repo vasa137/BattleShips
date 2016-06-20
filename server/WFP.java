@@ -40,5 +40,5 @@ public class WFP extends GameState {
 
 
 	@Override
-	public synchronized void execute(BattleOverseer battleOverseer) throws InterruptedException {}
+	public void execute(BattleOverseer battleOverseer) throws InterruptedException {}
 }

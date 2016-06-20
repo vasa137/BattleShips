@@ -10,7 +10,7 @@ public class WELCOME extends Command {
 		player.setID(Integer.parseInt(tokens[1]));
 		System.out.println("WELCOME");
 		// set flag that tells us that our player is in game
-		player.putInGame();
+		player.setState(Menu.OBSERVE_STATE);
 	}
 	
 }

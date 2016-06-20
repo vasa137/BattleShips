@@ -67,8 +67,12 @@ public class FIRE extends Command {
 							else if (fireCommand.equals("remove")) {
 								 int Num=Citaj.Int();
 								 // remove fire element
-								 fireShootlist.remove(Num);
-								 shootNum--;
+								 try{
+									 fireShootlist.remove(Num);
+									 shootNum--;
+								 }
+								 catch(IndexOutOfBoundsException ie){}
+								
 							}
 							else if (fireCommand.equals("finish")) {
 								// finish fire command

@@ -8,7 +8,7 @@ public class ACCESS_DENIED extends Command {
 		System.out.println("Access denied! ");
 		}
 		// set access flag to finish player while loop in BattleshipsPlayer
-		player.setAccessFlag(false);
+		player.setState(Menu.START_STATE);
 	}
 
 }

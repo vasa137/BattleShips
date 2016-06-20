@@ -7,7 +7,8 @@ public class GAME_OVER extends Command {
 	public void executeMessage(BattleshipsPlayer player, String message) {
 		synchronized(player){
 		System.out.println("GAME OVER");
-        player.setState(Menu.OBSERVE_STATE);
+       
+        player.setState(Menu.START_STATE);
 		}
 	}
 	
