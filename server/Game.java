@@ -37,7 +37,7 @@ public class Game {
     private long timeForDeploy = 5000, roundTime = 15000; 
     int [] shipCount; // index = number of segments, value = number of ships with index segments
     
-    ArrayList<Player> players = new ArrayList<>();
+    ArrayList<Player> players = new ArrayList<>(), activePlayers;
     Server gameServer;
     private BattleOverseer battleOverseer = null;
      
@@ -94,15 +94,9 @@ public class Game {
     		battleOverseer.interrupt();
     		battleOverseer = null;
     	}
+    	activePlayers = null;
     	players.clear(); 
     	gameServer.reset(); // reset server parameters and remove elements from maps
-    	try {
-			gamestate.execute(null);
-		} catch (InterruptedException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
     }
     
     private Game() throws SocketException {
@@ -182,5 +176,18 @@ public class Game {
 
 	public int getMinPlayers(){
 		return minPlayers;
+	}
+	
+	public ArrayList<Player> getActivePlayers(){
+		return activePlayers;
+	}
+	
+	public ArrayList<Player> clonePlayersToActive(){
+		activePlayers = (ArrayList<Player>) players.clone();
+		return activePlayers;
+	}
+	
+	public BattleOverseer getBattleOverseer(){
+		return battleOverseer;
 	}
 }

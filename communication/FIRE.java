@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import battleships.common.Coordinate;
+import battleships.common.StringSpliter;
 import battleships.communication.ClientCommand;
 import battleships.communication.Server;
 import battleships.server.Player;
@@ -19,8 +20,12 @@ public class FIRE extends ClientCommand{
 
 	@Override
 	public void executeServerToPlayerMessage(Server server, Player player, String message) {
+		if(!(Round.getInstance().getActivePlayers().contains(player))){
+			player.reportMessage(CommunicationCommands.ACCESS_DENIED);
+			return;
+		}
 		String delimiters = "[];";
-		String [] tokens = message.split(delimiters);
+		String [] tokens = StringSpliter.delimStr(message, delimiters);
 		
 		//player can only fire n times, n = number of operative segments of his ships
 		if(tokens.length > player.getTable().numberOfOperativeSegments()){

@@ -14,9 +14,9 @@ public class BattleOverseer extends Thread {
 			try {
 				myGame.getState().execute(this); // execute current state
 			} 
-			catch (InterruptedException e) {}
+			catch(InterruptedException e) {}
 			catch(IOException e){} 
-			System.out.println("Dosao");
+			
 			myGame.setState(myGame.getState().setNextState());  // go to next state
 		}
 	}

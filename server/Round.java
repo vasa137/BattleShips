@@ -1,5 +1,6 @@
 package battleships.server;
 
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,6 @@ public class Round extends GameState {
 	public Round(){
 		commandMap.put(CommunicationCommands.STATE_REQUEST, new STATE());
 		commandMap.put(CommunicationCommands.QUIT_MESSAGE, new QUIT());
-		commandMap.put(CommunicationCommands.FIRE, new FIRE());
 	}
 	
 	public static Round getInstance(){
@@ -43,42 +43,72 @@ public class Round extends GameState {
 		return instance;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public void initialize(Game game){
+	public void initialize(ArrayList<Player> activePlayers){
 		n = 0;
-		activePlayers = (ArrayList<Player>) game.getPlayers().clone();
+		this.activePlayers = activePlayers;
 	}
 	
 	@Override
-	public synchronized void execute(BattleOverseer battleOverseer) throws InterruptedException {
+	public void execute(BattleOverseer battleOverseer) throws InterruptedException {
 		set.clear(); // remove all bullets from previous round
 		n++; // round number
 		String messageForAllPlayers = CommunicationCommands.ROUND + " " + n + " " + battleOverseer.myGame.getRoundTime() + " [";
+		System.out.println("Phase : ROUND " + n);
 		
+		synchronized(this){
 		
-		for(int i = 0; i < activePlayers.size() ; i++){
-			messageForAllPlayers += activePlayers.get(i).getName() + ";";
+			for(int i = 0; i < activePlayers.size() ; i++){
+				messageForAllPlayers += activePlayers.get(i).getName() + ";";
+			}
+		
 		}
 		
 		messageForAllPlayers += "]";
 		
-		battleOverseer.myGame.sendMessageToAllPlayers(messageForAllPlayers);
+		synchronized(this){
+			battleOverseer.myGame.sendMessageToAllPlayers(messageForAllPlayers);
+		}
 		
 		timer = new Timer(this,battleOverseer.myGame.getRoundTime()); // wait till round time exceeds
 	
+		commandMap.put(CommunicationCommands.FIRE, new FIRE());
+		
+		synchronized(this){
 			wait();
+		}
+		
+		commandMap.remove(CommunicationCommands.FIRE, new FIRE());
 	
 	}
 
 
 	@Override
-	public synchronized UpdateShips setNextState() {
-		return UpdateShips.getInstance();
+	public synchronized GameState setNextState() {
+		if(activePlayers.size() < 2){
+			try {
+				Game.instance().stopGame();
+			} catch (SocketException e) {}
+			return WFP.getInstance();
+		}
+		else return UpdateShips.getInstance();
 	}
 
 	@Override
 	public synchronized String stateDescription() {
-		return "R " + n + " " + timer.getTimeLeft(); // x time
+		if(timer != null) return CommunicationCommands.R + " " + n + " " + timer.getTimeLeft(); // x time
+		else{
+			try {
+				return CommunicationCommands.R + " " + n + " " + Game.instance().getRoundTime(); // x time
+			} catch (SocketException e) {
+				System.out.println("Exception");
+			};
+		}
+		return null;
+
+	}
+
+	public ArrayList<Player> getActivePlayers() {
+		return activePlayers;
 	}
 
 	

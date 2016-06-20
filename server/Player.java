@@ -52,7 +52,7 @@ public class Player implements Runnable
                 String message = playerProxy.receive();
                 msg = message.substring(0,message.indexOf(' ')); 
             	second_part = message.substring(message.indexOf(' ')+1); 
-            	command = second_part.substring(message.indexOf(' ')+1);
+            	command = second_part.substring(second_part.indexOf(' ')+1);
             	try {
 					serverToPlayerCommand = Game.instance().getState().getCommandMap().get(msg);
 				} catch (SocketException e1) {
@@ -93,7 +93,6 @@ public class Player implements Runnable
         try {
 			table = new Table(tableSize , tableSize);
 		} catch (NegativDimension e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

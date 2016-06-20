@@ -6,6 +6,8 @@ import battleships.common.Bad_Coordinate;
 import battleships.common.Ship;
 import battleships.server.Game;
 import battleships.server.Player;
+import battleships.server.Round;
+import battleships.server.ShipDeploy;
 
 public class DEPLOY_SHIPS extends ClientCommand {
 
@@ -18,6 +20,10 @@ public class DEPLOY_SHIPS extends ClientCommand {
 	@Override
 	public void executeServerToPlayerMessage(Server server, Player player,  String message)
 			throws IOException {
+		if(!(ShipDeploy.getInstance().getActivePlayers().contains(player))){
+			player.reportMessage(CommunicationCommands.ACCESS_DENIED);
+			return;
+		}
 		if(player.layoutAcc()){ // layout can be only one time accepted
 			player.reportMessage(CommunicationCommands.LAYOUT_REJECTED);
 			return;
