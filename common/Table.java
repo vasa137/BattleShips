@@ -13,16 +13,16 @@ public class Table
 	public static final int COVERED=0;
 	public static final int WATER=1;
 	public static final int HIT_SHIP=2;
-	
+	public static final int OPERATIVE_SHIP=3;
 	//matrix ship is use only for PRIVATE mode, that is a mode that are used for user table, all fields are undecovred
-    private Ship matrixShip[][];
+    protected Ship matrixShip[][];
 	//matrix ship is use only for PUBLIC mode, that is a mode that are used for opponent table, all fields are covered on the beginning and will be undecovered in game 
-    private int matrixStatus[][];
+    protected int matrixStatus[][];
 	
     public static final int PRIVATE=0;
     public static final int PUBLIC=1;
  
-    private int visible;
+    protected int visible;
     
     public Table(int rowNumber, int columnNumber, int status) throws NegativDimension{
     	visible=status;
@@ -45,9 +45,12 @@ public class Table
     	
     
     public Ship getShip(Coordinate shipCoordinate) throws Bad_Coordinate{
+    	 System.out.println(toString());
     	if (visible==PRIVATE){
+    		System.out.println("usao");
 			// only private option, because in public mode we don't know value of covered field
 	        if(!shipCoordinate.inRange(matrixShip.length)) throw new Bad_Coordinate();
+	        System.out.println("usao" + shipCoordinate);
 	    	return matrixShip[shipCoordinate.getRow()][shipCoordinate.getColumn()];
     	}
     	return null;
@@ -71,7 +74,9 @@ public class Table
         	 for(int i=0;i<ship.segmentNumber();i++){
         		 Coordinate coord=ship.coordinateOfSegment(i);
         		 matrixShip[coord.getRow()][coord.getColumn()]=ship;
+        		 
         	 }
+        	 System.out.println(toString());
         	 return true;
           }
          else{
@@ -81,6 +86,7 @@ public class Table
    }
   
     public boolean putShip(Ship ship) throws Bad_Coordinate {
+    	if (ship==null) return false;
     	return putShip(ship,ship.getFirstCoordinate());
    }
 
@@ -195,4 +201,5 @@ public class Table
 		}
 		return newMessage.toString();
   }
+
 }

@@ -12,12 +12,13 @@ public class JOIN extends Command {
 
 	@Override
 	public void executeMessage(BattleshipsPlayer player, String message) {
-		System.out.print("Enter server IP address: ");
-		String address=Citaj.String();
-		System.out.print("Enter your name: ");
-    	String name=Citaj.String();
-    	
-   
+		
+		
+		String[] tokens=message.split(" ");
+		System.out.println(message);
+		String address=tokens[0];
+    	String name=tokens[1];
+    	String password=tokens[2];
 				try {
 					player.client = new Client(InetAddress.getByName(address),name);
 				} catch (SocketException | UnknownHostException e) {
@@ -29,7 +30,7 @@ public class JOIN extends Command {
 		//start Reciever thread
         player.clientReciever.start();
         player.setName(name);
-        player.send(CommunicationCommands.JOIN_MESSAGE + " " + name);
+        player.send(CommunicationCommands.JOIN_MESSAGE + " " + name+" /"+ password);
 	}
 	
 }

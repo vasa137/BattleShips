@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
-public class Menu {
+import javax.swing.JFrame;
+
+public class Menu{
 
 	private HashMap<Integer, HashMap<String,Command>> stateMap=null;
 	
@@ -14,6 +16,7 @@ public class Menu {
 	public static final int DEPLOY_SHIPS_STATE=1;
 	public static final int FIRE_STATE=2;
 	public static final int START_STATE=3;
+	
 	public Menu(){
 	
 		HashMap<String,Command> startState = new HashMap<String, Command>();
@@ -29,16 +32,15 @@ public class Menu {
 		
 		deployState.put("state",new STATE());
 		deployState.put("quit", new QUIT());
-		deployState.put("deploy", new DEPLOYMENT());
+		
 		
 		fireState.put("state",new STATE());
 		fireState.put("quit", new QUIT());
-		fireState.put("fire", new FIRE());
 		
 		stateMap=new HashMap<Integer,HashMap<String,Command>>();
 		stateMap.put(START_STATE,startState);
 		stateMap.put(OBSERVE_STATE,observeState);
-		stateMap.put(DEPLOY_SHIPS_STATE,deployState);
+		
 		stateMap.put(FIRE_STATE,fireState);
 	
 	}
@@ -64,9 +66,4 @@ public class Menu {
 		return stateMap.get(oldstate).get(key);
     }
 
-	public Command getCommand(BattleshipsPlayer battleshipsPlayer, String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

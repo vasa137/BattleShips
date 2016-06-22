@@ -55,6 +55,7 @@ public class Ship {
 	
 	public static Ship makeShip(String shipText){
 		System.out.println( "ship Text " + shipText);
+		if (shipText==null && shipText.equals("")) return null;
 		String delims = "S[,]=()";
 		String[] tokens = StringSpliter.delimStr(shipText, delims);
 		// make ship depends on text of format: "S(segmentNumber)=[Coordinate1,Coordinate2 ... ]"
@@ -64,9 +65,12 @@ public class Ship {
 		}
 		if (orientation==1) orientation=HORIZONTAL;
 		else orientation=VERTICAL;
+		Ship s=null;
+		if (tokens.length>=1){
 		System.out.println( "ship is  " + tokens[1] + "or < " +orientation);
-		Ship s=new Ship(Integer.parseInt(tokens[0]),orientation);
+		s=new Ship(Integer.parseInt(tokens[0]),orientation);
 		s.firstCoordinate=Coordinate.makeCoordinate(tokens[1]);
+		}
 		return s;
 	}
 	
@@ -120,6 +124,7 @@ public class Ship {
 					System.out.println("1.Mesto je zauzeto " +coord );
 					return false;
 				}
+				
 				}
 			 catch (Bad_Coordinate e) {
 				System.out.println("Ne staje na tablu ");
@@ -137,11 +142,11 @@ public class Ship {
 		}
 	
 		// check all coordinates, all coordinates of ship and coordinates around that ship
-		int xbegin=firstCoordinate.getColumn()-1;
-		int xend=lastCoordinate.getColumn()+1;
+		int xbegin=firstCoordinate.getRow()-1;
+		int xend=lastCoordinate.getRow()+1;
 		
-		int ybegin=firstCoordinate.getRow()-1;
-		int yend=lastCoordinate.getRow()+1;
+		int ybegin=firstCoordinate.getColumn()-1;
+		int yend=lastCoordinate.getColumn()+1;
 
 		for(int i=xbegin;i<=xend;i++){
 			for(int j=ybegin;j<=yend;j++){
@@ -153,7 +158,7 @@ public class Ship {
 						return false;
 					}
 				} catch (Bad_Coordinate e) {
-					System.out.println("Kad oivicim nece");
+					System.out.println("Kad oivicim nece" + i + j );
 				}
 			}
 		}

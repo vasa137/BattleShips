@@ -11,7 +11,8 @@ public class DEPLOY_SHIPS extends Command {
 			player.send(CommunicationCommands.CONFIRM_DEPLOY + " " + player.getID()+ " " + message);
 			// and send state reques to update left time
 			player.send(CommunicationCommands.STATE_REQUEST);
-			player.setState(Menu.DEPLOY_SHIPS_STATE);
 			player.setDeployContent(message.substring(message.indexOf(" ") + 1));
+			player.frame.changePanel(MyFrame.DEPLOY_SHIPS_STATE);
+			
   }
 }

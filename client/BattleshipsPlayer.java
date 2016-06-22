@@ -33,10 +33,11 @@ public class BattleshipsPlayer
     private int state = Menu.START_STATE;
     private long endTime;
     private volatile boolean inGame = false;
-    private Table myTable = null;
-    private HashMap<String,Table> opponentTables;
+    private GraphicTable myTable = null;
+    HashMap<String,GraphicTable> opponentTables;
 	private String deployContent;
-	
+    MyFrame frame;
+	private boolean deployFlag=false;
 	
     class Receiver extends Thread{
     	
@@ -67,12 +68,15 @@ public class BattleshipsPlayer
         */
     	
         Menu menu = new Menu();
+        frame=new MyFrame(menu,this);
         while(accessFlag){
 			// after entering the game, the user will be able to see menu in different states
-             String message = menu.print(this,state);
+            String message = menu.print(this,state);
+            /*
              if(message==null) continue;
              Command playerCommand=menu.getCommand(message.split(" ")[0]);
              if (playerCommand!=null) playerCommand.executeMessage(this,message); 
+             */
         }
         if (clientReciever!=null) clientReciever.interrupt();
     }
@@ -124,7 +128,7 @@ public class BattleshipsPlayer
 		return message;
 	}
     
-    public Table getTable(){
+    public GraphicTable getTable(){
     	return myTable;
     }
 	
@@ -167,17 +171,17 @@ public class BattleshipsPlayer
 
 	public void makeOpponentTables(String tokens[]) {
 		// make just logical tables, at the beggining contains only covered fields
-		opponentTables = new HashMap<String,Table>();
+		opponentTables = new HashMap<String,GraphicTable>();
 		for(int i=3;i<tokens.length;i++){
 			try {
-				if (!tokens[i].equals(clientName)) opponentTables.put(tokens[i],new Table(myTable.numRow(),myTable.numCol(),Table.PUBLIC));
+				if (!tokens[i].equals(clientName)) opponentTables.put(tokens[i],new GraphicTable(myTable.numRow(),myTable.numCol(),Table.PUBLIC,tokens[i],frame));
 			} catch (NegativDimension e) {}
 		}
 	}
 
     public void removeOpponentfromTable(String tokens[]) {
 		// if some of players aren't in update list , server will use this command to delete this pklayer from list
-       HashMap<String,Table> opponentT=new HashMap<String,Table>();
+       HashMap<String,GraphicTable> opponentT=new HashMap<String,GraphicTable>();
 		for(int i=3;i<tokens.length;i++){
 			if (!tokens[i].equals(clientName)) opponentT.put(tokens[i],opponentTables.get(tokens[i]));
 		}
@@ -223,7 +227,8 @@ public class BattleshipsPlayer
 			if(table!=null){
 				// this method we use in PUBLIC mode
 			if (substring.equals("H")) table.publicSetState(coord,Table.HIT_SHIP);
-			else table.publicSetState(coord,Table.WATER);
+			else if (substring.equals("M")) table.publicSetState(coord,Table.WATER);
+			else if(substring.equals("C")) table.publicSetState(coord,Table.COVERED);
 		   }
 		}
 	}
@@ -243,7 +248,23 @@ public class BattleshipsPlayer
 	
 	public void makeTable(int size) {
 		try {
-			myTable=new Table(size,size);
+			myTable=new GraphicTable(size,size,clientName,frame);
 		} catch (NegativDimension e) {}
+	}
+
+
+	public void interrupt() {
+		 if (clientReciever!=null) clientReciever.interrupt();
+		 accessFlag=false;
+	}
+
+
+	public void setDeployFlag() {
+		deployFlag=true;
+	}
+
+
+	public boolean getDeployFlag() {
+		return deployFlag;
 	}
 }

@@ -7,6 +7,7 @@ public class LAYOUT_ACCEPTED extends Command {
 	public void executeMessage(BattleshipsPlayer player, String message) {
 		synchronized(player){
 		System.out.println("LAYOUT ACCEPTED!");
+		player.setDeployFlag();
 		}
 	}
 }

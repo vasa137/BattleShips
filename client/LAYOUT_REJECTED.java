@@ -7,6 +7,8 @@ public class LAYOUT_REJECTED extends Command {
 	public void executeMessage(BattleshipsPlayer player, String message) {
 		synchronized(player){
 		System.out.println("LAYOUT REJECTED!");
+		player.getTable().deleteTable();
+		
 		}
 	}
 

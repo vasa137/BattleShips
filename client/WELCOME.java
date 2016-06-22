@@ -1,5 +1,7 @@
 package battleships.client;
 
+import battleships.communication.CommunicationCommands;
+
 public class WELCOME extends Command {
 
 
@@ -11,6 +13,9 @@ public class WELCOME extends Command {
 		System.out.println("WELCOME");
 		// set flag that tells us that our player is in game
 		player.setState(Menu.OBSERVE_STATE);
+		((InfoPanel)player.frame.getPanel(MyFrame.INFO_STATE)).setInfoMessage("WELCOME! ");
+		player.frame.changePanel(MyFrame.INFO_STATE);
+		player.send(CommunicationCommands.STATE_REQUEST);
 	}
 	
 }
